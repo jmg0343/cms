@@ -10,39 +10,45 @@
                 </div>
 
                 <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th></th>
-                            <th></th>
-                        </thead>
-                        <tbody>
-                            @foreach ($posts as $post)
-                                <tr>
-                                    <td class="w-50">
-                                        {{-- php artisan storage:link links public storage folder to public folder --}}
-                                        {{-- allows uploaded images to be displayed --}}
-                                        <img src="{{ asset($post->image) }}" class="" width="120px" alt="{{ $post->title }}">
-                                    </td>
-                                    <td class="w-50">
-                                        {{ $post->title }}
-                                    </td>
-                                    <td>
-                                        <a href="" class="btn btn-info btn-sm">Edit</a>
-                                    </td>
-                                    <td>
-                                        <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            
-                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    @if ($posts->count() == 0)
+                        <h3 class="text-center">No Posts At This Time</h3>
+                    @else
+                        <table class="table">
+                            <thead>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th></th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                @foreach ($posts as $post)
+                                    <tr>
+                                        <td class="w-50">
+                                            {{-- php artisan storage:link links public storage folder to public folder --}}
+                                            {{-- allows uploaded images to be displayed --}}
+                                            <img src="{{ asset($post->image) }}" class="" width="120px" alt="{{ $post->title }}">
+                                        </td>
+                                        <td class="w-50">
+                                            {{ $post->title }}
+                                        </td>
+                                        @if (!$post->trashed())
+                                            <td>
+                                                <a href="" class="btn btn-info btn-sm">Edit</a>
+                                            </td>
+                                        @endif
+                                        <td>
+                                            <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                
+                                                <button type="submit" class="btn btn-danger btn-sm">{{ $post->trashed() ? 'Delete' : 'Trash' }}</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
             </div>
         </div>
