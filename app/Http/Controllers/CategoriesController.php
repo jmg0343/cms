@@ -16,6 +16,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
+        // fetch all categories from DB and pass with 'categories' variable
         return view('categories.index')->with('categories', Category::all());
     }
 
