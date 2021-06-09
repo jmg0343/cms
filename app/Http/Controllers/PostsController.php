@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\Posts\CreatePostsRequest;
 use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Posts\CreatePostsRequest;
 
 class PostsController extends Controller
 {
@@ -103,6 +104,8 @@ class PostsController extends Controller
         $post = Post::withTrashed()->where('id', $id)->firstOrFail();
 
         if ($post->trashed()) {
+            // delete uploaded files from storage/app/public/posts
+            Storage::delete($post->image);
             $post->forceDelete();
             session()->flash('success', 'Post Successfully Deleted');
         } else {
