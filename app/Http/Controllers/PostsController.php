@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Http\Requests\Posts\CreatePostsRequest;
 
 class PostsController extends Controller
@@ -76,9 +77,9 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('posts.create')->with('post', $post);
     }
 
     /**
@@ -88,9 +89,30 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        // $request->only for security reasons
+        $data = $request->only(['title', 'description', 'published_at', 'content']);
+
+        // check if new image
+        if ($request->hasFile('image')) {
+            // upload the new image
+            $image = $request->image->store('posts');
+
+            // delete old image
+            Storage::delete($post->image);
+
+            $data['image'] = $image;
+        }
+
+        // update attributes
+        $post->update($data);
+
+        // flash message
+        session()->flash('success', 'Post Successfully Updated');
+
+        // redirect user
+        return redirect(route('posts.index'));
     }
 
     /**
@@ -104,17 +126,19 @@ class PostsController extends Controller
         // route/model binding will not work because we are retrieving trashed posts (id will not be found)
         $post = Post::withTrashed()->where('id', $id)->firstOrFail();
 
+        $sessionMessage = null;
+
         if ($post->trashed()) {
             // delete uploaded files from storage/app/public/posts
             Storage::delete($post->image);
             $post->forceDelete();
-            session()->flash('success', 'Post Successfully Deleted');
+            $sessionMessage = 'Post Successfully Deleted';
         } else {
             $post->delete();
-            session()->flash('success', 'Post Successfully Trashed');
+            $sessionMessage = 'Post Successfully Trashed';
         }
 
-        
+        session()->flash('success', $sessionMessage);
 
         return redirect(route('posts.index'));
     }
