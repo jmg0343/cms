@@ -18,4 +18,13 @@ class Post extends Model
         'image',
         'published_at'
     ];
+
+    /**
+     * Delete post image from storage
+     * @return void
+     * */
+    public function deleteImage()
+    {
+        Storage::delete($this->image);
+    }
 }
