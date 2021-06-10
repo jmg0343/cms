@@ -17,19 +17,24 @@
                             <thead>
                                 <th>Image</th>
                                 <th>Title</th>
+                                <th>Category</th>
                                 <th></th>
                                 <th></th>
                             </thead>
                             <tbody>
                                 @foreach ($posts as $post)
                                     <tr>
-                                        <td class="w-50">
+                                        <td class="w-25">
                                             {{-- php artisan storage:link links public storage folder to public folder --}}
                                             {{-- allows uploaded images to be displayed --}}
                                             <img src="{{ asset($post->image) }}" class="" width="120px" alt="{{ $post->title }}">
                                         </td>
-                                        <td class="w-50">
+                                        <td class="w-25">
                                             {{ $post->title }}
+                                        </td>
+                                        {{-- Post model tells Laravel that each post only has one category --}}
+                                        <td class="w-25">
+                                            <a href="{{ route('categories.edit', $post->category_id) }}">{{ $post->category->name }}</a>
                                         </td>
                                         @if ($post->trashed())
                                             <td>

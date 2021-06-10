@@ -18,13 +18,18 @@
                 <table class="table">
                     <thead>
                         <th>Name</th>
+                        <th>Post Count</th>
                         <th></th>
                     </thead>
                     <tbody>
                         @foreach ($categories as $category)
                             <tr>
-                                <td>
+                                <td class="w-50">
                                     {{ $category->name }}
+                                </td>
+                                {{-- Laravel knows from Category model that categories have many posts --}}
+                                <td class="w-25">
+                                    {{ $category->posts->count() }}
                                 </td>
                                 <td>
                                     <div class="float-end">
