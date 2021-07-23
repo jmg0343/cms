@@ -10,6 +10,13 @@ use App\Http\Requests\Posts\CreatePostsRequest;
 
 class PostsController extends Controller
 {
+    // apply custom middleware that prevents creating posts without a category
+    // *** NOTE *** custom middleware must be added to Kernel.php file
+    public function __construct()
+    {
+        $this->middleware('verifyCategoryCount')->only(['create', 'store']);
+    }
+
     /**
      * Display a listing of the resource.
      *
