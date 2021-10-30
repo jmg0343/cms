@@ -97,6 +97,12 @@ class CategoriesController extends Controller
      */
     public function destroy(Category $category)
     {
+        if ($category->posts->count() > 0) {
+            session()->flash('error', 'Category cannot be deleted because of attached posts');
+
+            return redirect()->back();
+        }
+
         // route/model binding allows $category to automatically contain correct id
         $category->delete();
 

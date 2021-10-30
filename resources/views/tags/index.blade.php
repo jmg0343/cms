@@ -29,8 +29,7 @@
                                 </td>
                                 {{-- Laravel knows from Tag model that tags have many posts --}}
                                 <td class="w-25">
-                                    {{-- {{ $tag->posts->count() }} --}}
-                                    0
+                                    {{ $tag->posts->count() }}
                                 </td>
                                 <td>
                                     <div class="float-end">

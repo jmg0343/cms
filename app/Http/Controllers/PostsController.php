@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('posts.create')->with('categories', Category::all());
+        return view('posts.create')->with('categories', Category::all())->with('tags', Tag::all());
     }
 
     /**
@@ -52,7 +53,7 @@ class PostsController extends Controller
         $image = $request->image->store('posts');
 
         // create the post
-        Post::create([
+        $post = Post::create([
             'title' => $request->title,
             'description' => $request->description,
             'content' => $request->content,
@@ -60,6 +61,12 @@ class PostsController extends Controller
             'category_id' => $request->category,
             'published_at' => $request->published_at
         ]);
+
+        if ($request->tags) {
+            // attach is available because of many-to-many relationship
+            // attaches tags to post that was created
+            $post->tags()->attach($request->tags);
+        }
 
         // flash message
             session()->flash('success', 'Post Successfuly Created');
@@ -87,7 +94,7 @@ class PostsController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.create')->with('post', $post)->with('categories', Category::all());
+        return view('posts.create')->with('post', $post)->with('categories', Category::all())->with('tags', Tag::all());
     }
 
     /**
@@ -111,6 +118,12 @@ class PostsController extends Controller
             $post->deleteImage();
 
             $data['image'] = $image;
+        }
+
+        if ($request->tags) {
+            // sync() available because of many-to-many relationship
+            // checks if tags were already attached to post, adds new tags, detaches unselected tags
+            $post->tags()->sync($request->tags);
         }
 
         // update attributes

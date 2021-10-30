@@ -97,6 +97,11 @@ class TagsController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        if ($tag->posts->count() > 0) {
+            session()->flash('error', 'Tag cannot be deleted because of attached posts');
+
+            return redirect()->back();
+        }
         // route/model binding allows $Tag to automatically contain correct id
         $tag->delete();
 
