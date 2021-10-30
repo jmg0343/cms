@@ -37,13 +37,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('trashed-posts', [PostsController::class, 'trashed'])->name('trashed-posts.index');
 
     Route::put('restore-post/{post}', [PostsController::class, 'restore'])->name('restore-posts');
-});
 
-Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('users/profile', [UsersController::class, 'edit'])->name('users.edit-profile');
 
     Route::put('users/profile', [UsersController::class, 'update'])->name('users.update-profile');
+});
 
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('users', [UsersController::class, 'index'])->name('users.index');
     
     Route::post('users/{user}/make-admin', [UsersController::class, 'makeAdmin'])->name('users.make-admin');
